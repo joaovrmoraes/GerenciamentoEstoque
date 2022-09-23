@@ -1,0 +1,11 @@
+.edit_button1 {
+    font-weight: bold;
+}
+
+.edit_button1:hover {
+    transform: scale(0.90);
+}
+
+.pageakdf {
+    background-color: black;
+}
