@@ -1,26 +1,55 @@
 import * as React from 'react';
-import './button.css';
-import { FcAddDatabase, FcPlus } from 'react-icons/fc';
-import { FaPlusCircle } from 'react-icons/fa'
+import BotaoCategoria from '../buttonCategoria/button.js';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { InputGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Stack from 'react-bootstrap/Stack';
 import api from '../../services/api/axios';
-import { InputGroup } from 'react-bootstrap';
-import BotaoCategoria from '../buttonCategoria/button.js';
 import Reload from '../refresh/refresh';
+import 'react-toastify/dist/ReactToastify.css';
+import './button.css';
 
-function BotaoCadastro({ atualizacao }) {
-    const [show, setShow] = useState(false);
+function BotaoCadastro() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const [categoria, setCategoria] = useState([]);
-
+    const [show, setShow] = useState(false);
     const [nome, setNome] = useState('');
     const [categori, setCategori] = useState('');
     const [descricao, setDescricao] = useState('');
+    const [mensagem, setMensagem] = useState('');
+    const [alerta, setAlerta] = useState(0);
+    const [categoria, setCategoria] = useState([]);
+
+    const customId = "custom-notificacaocadastro";
+
+    const notify = () => {
+        toast.warn(mensagem, {
+            position: "top-left",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            toastId: customId,
+        });
+    }
+
+    const notifySuccess = () => {
+        toast.success(' Produto cadastrado!', {
+            position: "top-left",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            toastId: customId,
+        });
+    }
 
     useEffect(() => {
         api.get('/categoria')
@@ -31,20 +60,35 @@ function BotaoCadastro({ atualizacao }) {
     }, [])
 
     function adicionar() {
-        api.post('/cadastrar', {
-            nome: nome,
-            categoria: categori,
-            descricao: descricao
-        })
-            .then(async (response) => {
-                console.log('ok')
-            }).catch(error => {
-                console.log('erro')
+        if (nome === '') {
+            setAlerta(1)
+            setMensagem('Nome invalido')
+        } else if (categori === '') {
+            setAlerta(1)
+            setMensagem('Categoria invalida')
+        }
+        else {
+            api.post('/cadastrar', {
+                nome: nome,
+                categoria: categori,
+                descricao: descricao
             })
+                .then(async (response) => {
+                    console.log('ok')
+                }).catch(error => {
+                    console.log('erro')
+                })
+            notifySuccess();
+            setTimeout(() => {
+                Reload();
+            }, "1000");
+        }
     }
 
     return (
         <>
+            {alerta ? notify() :
+                null}
             <Button onClick={handleShow} variant='success'>
                 <span className="teste2" style={{ 'fontWeight': 'bold' }}>Cadastrar</span>
             </Button>
@@ -101,7 +145,7 @@ function BotaoCadastro({ atualizacao }) {
                     </Stack>
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-between'>
-                    <Button variant="success" onClick={() => { handleClose(); adicionar(); Reload() }}>
+                    <Button variant="success" onClick={() => { handleClose(); adicionar(); }}>
                         Inserir
                     </Button>
                     <Button variant="danger" onClick={() => { handleClose() }}>
@@ -112,4 +156,5 @@ function BotaoCadastro({ atualizacao }) {
         </>
     )
 }
+
 export default BotaoCadastro

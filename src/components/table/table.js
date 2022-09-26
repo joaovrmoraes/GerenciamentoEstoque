@@ -12,15 +12,23 @@ import LogButton from '../buttonLog/button.js';
 
 function TabelaEstoque() {
     const [itens, setItens] = useState([]);
+    const [categorias, setCategorias] = useState([]);
+    const [buscaCate, setBuscaCate] = useState([])
     const [busca, setBusca] = useState('');
 
     useEffect(() => {
-        api.get('/buscaprodutos?nome=' + busca)
+        api.get(`/buscaprodutos?nome=${busca}&descricao=${busca}&id=${busca}&categoria=${buscaCate}`)
             .then(async (response) => {
                 await
                     setItens(response.data)
             }).catch(error => { console.log('erro ao receber lista') })
-    }, [busca])
+
+        api.get('/categoria')
+            .then(async (response) => {
+                await
+                    setCategorias(response.data)
+            }).catch(error => { console.log('erro ao receber lista') })
+    }, [busca, buscaCate])
 
     return (
         <>
@@ -64,7 +72,17 @@ function TabelaEstoque() {
                         <th>#</th>
                         <th>Código</th>
                         <th>Produto</th>
-                        <th>Categoria</th>
+                        <th>
+                            <select defaultValue={''} className='text-center' style={{ 'border': '0 none', 'fontWeight': 'bold', 'outline': '0 none' }}
+                                onChange={(e) => { setBuscaCate(e.target.value); setItens([]); }}>
+                                <option value={''} style={{ 'fontWeight': 'bold' }}>Categoria</option>
+                                {categorias.map((catego) => {
+                                    return (
+                                        <option value={catego.categoria} style={{ 'fontWeight': 'bold' }} key={catego.id}>{catego.categoria}</option>
+                                    )
+                                })}
+                            </select>
+                        </th>
                         <th>Quantidade</th>
                         <th>Ref/Desc</th>
                     </tr>
