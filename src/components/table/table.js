@@ -1,20 +1,52 @@
 import * as React from 'react';
 import Table from 'react-bootstrap/Table';
 import { useEffect, useState } from 'react';
-import BotaoModal from '../button/button';
 import api from '../../services/api/axios';
 import './table.css';
-import { Form, Row, Col, InputGroup } from 'react-bootstrap';
+import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa'
 import BotaoCadastro from '../buttonCadastro/button.js';
-
 import LogButton from '../buttonLog/button.js';
+import { FaMinus, FaPlus } from 'react-icons/fa';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 function TabelaEstoque() {
     const [itens, setItens] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [buscaCate, setBuscaCate] = useState([])
     const [busca, setBusca] = useState('');
+    const [produto, setProduto] = useState('');
+    const [codigo, setCodigo] = useState('');
+    const [quantidade, setQuantidade] = useState(0);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const customId = "custom-notificaInsercao";
+    const customId1 = "custom-notificaRemocao";
+
+    const notifySuccess = () => {
+        toast.success(` Adicionado ${quantidade} UN(${produto})`, {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
+    const notifyDanger = () => {
+        toast.error(` Removido ${quantidade} UN(${produto})`, {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
 
     useEffect(() => {
         api.get(`/buscaprodutos?nome=${busca}&descricao=${busca}&id=${busca}&categoria=${buscaCate}`)
@@ -28,7 +60,49 @@ function TabelaEstoque() {
                 await
                     setCategorias(response.data)
             }).catch(error => { console.log('erro ao receber lista') })
-    }, [busca, buscaCate])
+    }, [busca, buscaCate, refreshKey])
+
+    function atualizador() {
+        setRefreshKey(oldKey => oldKey + 1);
+    }
+
+    function limpar() {
+        document.getElementById('campo').value = '';
+    }
+
+    function Entrada() {
+        api.put('/addquant', {
+            nome: produto,
+            quantidade: parseInt(quantidade),
+            id: codigo
+        })
+            .then(async (response) => {
+                console.log('ok')
+            }).catch(error => {
+                console.log('erro')
+            })
+        setQuantidade('');
+        atualizador();
+        limpar();
+        notifySuccess();
+    }
+    function Saida() {
+        api.put('/subquant', {
+            nome: produto,
+            quantidade: parseInt(quantidade),
+            id: codigo
+        })
+            .then(async (response) => {
+                console.log('ok')
+            }).catch(error => {
+                console.log('erro')
+            })
+
+        setQuantidade('');
+        atualizador();
+        limpar();
+        notifyDanger();
+    }
 
     return (
         <>
@@ -84,6 +158,7 @@ function TabelaEstoque() {
                             </select>
                         </th>
                         <th>Quantidade</th>
+                        <th>U.M</th>
                         <th>Ref/Desc</th>
                     </tr>
                 </thead>
@@ -92,15 +167,24 @@ function TabelaEstoque() {
                         return (
                             <tr key={itens.id}>
                                 <td onClick={() => {
-                                    localStorage.setItem('reduzido', itens.id);
-                                    localStorage.setItem('nome', itens.nome);
+
                                 }}>
-                                    <BotaoModal />
+                                    {/* <BotaoModal /> */}
+                                    <Form>
+                                        <Form.Group className="mb-1" >
+                                            <input id='campo' style={{ 'maxWidth': '100px' }} onChange={(e) => { setQuantidade(e.target.value); setCodigo(itens.id); setProduto(itens.nome) }} />
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Button variant='success' size='sm' style={{ 'marginRight': '10px' }} onClick={Entrada}><FaPlus /></Button>
+                                            <Button variant='danger' size='sm' onClick={Saida}><FaMinus /></Button>
+                                        </Form.Group>
+                                    </Form>
                                 </td>
                                 <td>{itens.id}</td>
                                 <td>{itens.nome}</td>
                                 <td>{itens.categoria}</td>
                                 <td>{itens.quantidade}</td>
+                                <td>{itens.um}</td>
                                 <td>{itens.descricao}</td>
                             </tr>
                         )
