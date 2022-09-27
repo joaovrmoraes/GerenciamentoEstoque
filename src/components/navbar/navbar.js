@@ -9,16 +9,9 @@ function NavigateBar() {
         <Navbar bg="dark" variant="dark">
             <Container>
                 <Navbar.Brand href="/">
-                    <span className='logo'></span>
+                    <span className='logo'>Truck Center</span>
                 </Navbar.Brand>
                 <Navbar.Toggle />
-                <Nav className="justify-content-end teste2">
-                    <Nav.Link href="#" className='cadastro'>
-                        {/* <LogButton /> */}
-                    </Nav.Link>
-                    <Nav.Link href="#features" className='cadastro'>
-                    </Nav.Link>
-                </Nav>
             </Container>
         </Navbar>
     );

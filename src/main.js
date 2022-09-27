@@ -15,6 +15,7 @@ const createWindow = () => {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+    icon: 'E:\\Joao\\Projeto de Teste\\APITeste\\electron\\icone\\semi.png'
   });
 
   // and load the index.html of the app.
@@ -22,6 +23,7 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+  mainWindow.setOverlayIcon('E:\\Joao\\Projeto de Teste\\APITeste\\electron\\icone\\semi.png', 'Gerenciamento Estoque')
 };
 
 // This method will be called when Electron has finished

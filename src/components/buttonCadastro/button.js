@@ -1,5 +1,6 @@
 import * as React from 'react';
 import BotaoCategoria from '../buttonCategoria/button.js';
+import BotaoUnidade from '../buttonUnidade/button.js';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { InputGroup } from 'react-bootstrap';
@@ -18,11 +19,12 @@ function BotaoCadastro() {
     const [show, setShow] = useState(false);
     const [nome, setNome] = useState('');
     const [categori, setCategori] = useState('');
+    const [um, setUM] = useState('');
     const [descricao, setDescricao] = useState('');
     const [mensagem, setMensagem] = useState('');
     const [alerta, setAlerta] = useState(0);
     const [categoria, setCategoria] = useState([]);
-
+    const [unidade, setUnidade] = useState([]);
     const customId = "custom-notificacaocadastro";
 
     const notify = () => {
@@ -57,6 +59,11 @@ function BotaoCadastro() {
                 await
                     setCategoria(response.data)
             }).catch(error => { console.log('erro ao receber lista') })
+        api.get('/um')
+            .then(async (response) => {
+                await
+                    setUnidade(response.data)
+            }).catch(error => { console.log('erro ao receber lista') })
     }, [])
 
     function adicionar() {
@@ -66,12 +73,16 @@ function BotaoCadastro() {
         } else if (categori === '') {
             setAlerta(1)
             setMensagem('Categoria invalida')
+        } else if (um === '') {
+            setAlerta(1)
+            setMensagem('Unidade invalida')
         }
         else {
             api.post('/cadastrar', {
                 nome: nome,
                 categoria: categori,
-                descricao: descricao
+                descricao: descricao,
+                um: um
             })
                 .then(async (response) => {
                     console.log('ok')
@@ -123,7 +134,7 @@ function BotaoCadastro() {
                             />
                         </Form.Group>
                     </Form>
-                    <Stack direction="horizontal" className='align-middle' gap={2}>
+                    <Stack direction="horizontal" className='align-middle d-flex justify-content-between' gap={2}>
                         <Form.Group >
                             <Form.Label>Categoria:</Form.Label>
                             <InputGroup>
@@ -139,6 +150,24 @@ function BotaoCadastro() {
                                 </Form.Select>
                                 <InputGroup.Text style={{ 'backgroundColor': 'transparent' }}>
                                     <BotaoCategoria />
+                                </InputGroup.Text>
+                            </InputGroup>
+                        </Form.Group>
+                        <Form.Group >
+                            <Form.Label>Unidade de Medida:</Form.Label>
+                            <InputGroup>
+                                <Form.Select onChange={(e) => { setUM(e.target.value) }} defaultValue={0}>
+                                    <option disabled value={0}>Selecione uma unidade</option>
+                                    {
+                                        unidade.map((um) => {
+                                            return (
+                                                <option key={um.id} value={um.um}>{um.um}</option>
+                                            )
+                                        })
+                                    }
+                                </Form.Select>
+                                <InputGroup.Text style={{ 'backgroundColor': 'transparent' }}>
+                                    <BotaoUnidade />
                                 </InputGroup.Text>
                             </InputGroup>
                         </Form.Group>

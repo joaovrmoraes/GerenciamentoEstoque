@@ -21,9 +21,6 @@ function TabelaEstoque() {
     const [quantidade, setQuantidade] = useState(0);
     const [refreshKey, setRefreshKey] = useState(0);
 
-    const customId = "custom-notificaInsercao";
-    const customId1 = "custom-notificaRemocao";
-
     const notifySuccess = () => {
         toast.success(` Adicionado ${quantidade} UN(${produto})`, {
             position: "bottom-center",
@@ -38,6 +35,18 @@ function TabelaEstoque() {
 
     const notifyDanger = () => {
         toast.error(` Removido ${quantidade} UN(${produto})`, {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
+    const notifyWarn = () => {
+        toast.warn(`Quantidade igual a 0`, {
             position: "bottom-center",
             autoClose: 2000,
             hideProgressBar: false,
@@ -71,38 +80,48 @@ function TabelaEstoque() {
     }
 
     function Entrada() {
-        api.put('/addquant', {
-            nome: produto,
-            quantidade: parseInt(quantidade),
-            id: codigo
-        })
-            .then(async (response) => {
-                console.log('ok')
-            }).catch(error => {
-                console.log('erro')
+        if (quantidade === 0) {
+            notifyWarn();
+        } else {
+            api.put('/addquant', {
+                nome: produto,
+                quantidade: parseInt(quantidade),
+                id: codigo
             })
-        setQuantidade('');
-        atualizador();
-        limpar();
-        notifySuccess();
+                .then(async (response) => {
+                    console.log('ok')
+                }).catch(error => {
+                    console.log('erro')
+                })
+            setQuantidade(0);
+            atualizador();
+            limpar();
+            notifySuccess();
+        }
     }
     function Saida() {
-        api.put('/subquant', {
-            nome: produto,
-            quantidade: parseInt(quantidade),
-            id: codigo
-        })
-            .then(async (response) => {
-                console.log('ok')
-            }).catch(error => {
-                console.log('erro')
+        if (quantidade === 0) {
+            notifyWarn();
+        } else {
+            api.put('/subquant', {
+                nome: produto,
+                quantidade: parseInt(quantidade),
+                id: codigo
             })
+                .then(async (response) => {
+                    console.log('ok')
+                }).catch(error => {
+                    console.log('erro')
+                })
 
-        setQuantidade('');
-        atualizador();
-        limpar();
-        notifyDanger();
+            setQuantidade(0);
+            atualizador();
+            limpar();
+            notifyDanger();
+        }
     }
+
+
 
     return (
         <>
@@ -172,11 +191,11 @@ function TabelaEstoque() {
                                     {/* <BotaoModal /> */}
                                     <Form>
                                         <Form.Group className="mb-1" >
-                                            <input id='campo' style={{ 'maxWidth': '100px' }} onChange={(e) => { setQuantidade(e.target.value); setCodigo(itens.id); setProduto(itens.nome) }} />
+                                            <input id='campo' className='text-center' style={{ 'maxWidth': '100px' }} onChange={(e) => { setQuantidade(e.target.value); setCodigo(itens.id); setProduto(itens.nome) }} />
                                         </Form.Group>
                                         <Form.Group>
-                                            <Button variant='success' size='sm' style={{ 'marginRight': '10px' }} onClick={Entrada}><FaPlus /></Button>
-                                            <Button variant='danger' size='sm' onClick={Saida}><FaMinus /></Button>
+                                            <Button variant='success' size='sm' style={{ 'marginRight': '10px' }} onClick={() => { Entrada(); limpar() }}><FaPlus /></Button>
+                                            <Button variant='danger' size='sm' onClick={() => { Saida(); limpar() }}><FaMinus /></Button>
                                         </Form.Group>
                                     </Form>
                                 </td>

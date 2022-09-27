@@ -37,21 +37,6 @@ function LogButton() {
             }).catch(error => { console.log('erro ao receber lista') })
     }, [busca, dataSelect, categoria])
 
-    function filterMovimentacao() {
-        // api.get('/filtro?tipo=' + categoria)
-        //     .then(async (response) => {
-        //         await
-        //             setLogs(response.data)
-        //     }).catch(error => { console.log('erro ao receber lista') })
-    }
-
-    function filterData() {
-        // api.get('/filtro?nome=&data=' + dataSelect)
-        //     .then(async (response) => {
-        //         await
-        //             setLogs(response.data)
-        //     }).catch(error => { console.log('erro ao receber lista') })
-    }
 
     return (
         <>
@@ -107,7 +92,7 @@ function LogButton() {
                             <tr>
                                 <th>
                                     <select defaultValue={''} className='text-center' style={{ 'border': '0 none', 'fontWeight': 'bold', 'outline': '0 none' }}
-                                        onChange={(e) => { setCategoria(e.target.value); setLogs([]); }} onClick={filterMovimentacao}>
+                                        onChange={(e) => { setCategoria(e.target.value); setLogs([]); }}>
                                         <option value={''} style={{ 'fontWeight': 'bold' }}>Situação</option>
                                         <option value="1" style={{ 'fontWeight': 'bold', 'color': 'red' }}>SAIDA</option>
                                         <option value="0" style={{ 'fontWeight': 'bold', 'color': 'green' }}>ENTRADA</option>
@@ -117,7 +102,7 @@ function LogButton() {
                                 <th>Quantidade</th>
                                 <th>
                                     <select defaultValue={''} className='text-center' style={{ 'border': '0 none', 'fontWeight': 'bold', 'outline': '0 none' }}
-                                        onChange={(e) => { setDataSelect(e.target.value); setLogs([]); }} onClick={filterData}>
+                                        onChange={(e) => { setDataSelect(e.target.value); setLogs([]); }}>
                                         <option value={''} style={{ 'fontWeight': 'bold' }}>Data</option>
                                         {data.map((date) => {
                                             return (
@@ -140,7 +125,7 @@ function LogButton() {
                                         </td>
                                         <td >{logs.nome}</td>
                                         <td >{logs.quantidade}</td>
-                                        <td>{logs.data}</td>
+                                        <td >{logs.data}</td>
                                     </tr>
                                 )
                             })}
