@@ -37,6 +37,13 @@ function LogButton() {
             }).catch(error => { console.log('erro ao receber lista') })
     }, [busca, dataSelect, categoria])
 
+    function horarioEdit(value) {
+        let horario = value.split(':')
+        if (horario[1] < 10) {
+            return `${horario[0]}:0${horario[1]}`
+        }
+        return value
+    }
 
     return (
         <>
@@ -111,6 +118,7 @@ function LogButton() {
                                         })}
                                     </select>
                                 </th>
+                                <th>Hora</th>
                             </tr>
                         </thead>
                         <tbody className='text-center'>
@@ -126,6 +134,7 @@ function LogButton() {
                                         <td >{logs.nome}</td>
                                         <td >{logs.quantidade}</td>
                                         <td >{logs.data}</td>
+                                        <td >{horarioEdit(logs.hora)}</td>
                                     </tr>
                                 )
                             })}

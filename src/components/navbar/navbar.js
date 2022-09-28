@@ -12,6 +12,8 @@ function NavigateBar() {
                     <span className='logo'>Truck Center</span>
                 </Navbar.Brand>
                 <Navbar.Toggle />
+                <Nav.Link>
+                </Nav.Link>
             </Container>
         </Navbar>
     );

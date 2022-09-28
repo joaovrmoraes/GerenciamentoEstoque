@@ -7,6 +7,7 @@ import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa'
 import BotaoCadastro from '../buttonCadastro/button.js';
 import LogButton from '../buttonLog/button.js';
+import BotaoGrafico from '../buttonGrafico/button';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
@@ -99,6 +100,7 @@ function TabelaEstoque() {
             notifySuccess();
         }
     }
+
     function Saida() {
         if (quantidade === 0) {
             notifyWarn();
@@ -120,8 +122,6 @@ function TabelaEstoque() {
             notifyDanger();
         }
     }
-
-
 
     return (
         <>
